@@ -1,0 +1,12 @@
+.dockerignore
+.github/
+.git/
+.next/
+node_modules/
+*.md
+Dockerfile
+docker-compose.yml
+docker/
+uploads/*
+!uploads/.gitkeep
+config.lock

@@ -1,0 +1,38 @@
+# Apache URL重写规则
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # 强制 HTTPS（可选，需要时取消注释）
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # 保护敏感文件
+    RewriteRule ^(config\.php|database\.sql|config\.lock)$ - [F,L]
+    
+    # 保护 includes 目录
+    RewriteRule ^includes/ - [F,L]
+    
+    # 保护 templates 目录
+    RewriteRule ^templates/ - [F,L]
+    
+    # 静态文件直接访问
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # 其他请求重写到 index.php
+    RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>
+
+# 禁止目录列表
+Options -Indexes
+
+# 设置默认字符集
+AddDefaultCharset UTF-8
+
+# PHP 设置
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+</IfModule>

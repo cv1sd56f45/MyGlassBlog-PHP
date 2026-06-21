@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: myglassblog-php
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=myglassblog
+      - DB_USER=myglassblog
+      - DB_PASS=myglassblog123
+      - DB_CHARSET=utf8mb4
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./config.php:/var/www/html/config.php
+    depends_on:
+      - db
+    networks:
+      - myglassblog-network
+
+  db:
+    image: mysql:8.0
+    container_name: myglassblog-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword123
+      - MYSQL_DATABASE=myglassblog
+      - MYSQL_USER=myglassblog
+      - MYSQL_PASSWORD=myglassblog123
+    volumes:
+      - myglassblog_mysql_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - myglassblog-network
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  myglassblog_mysql_data:
+
+networks:
+  myglassblog-network:
+    driver: bridge
