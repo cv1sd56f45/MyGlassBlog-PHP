@@ -1,11 +1,10 @@
 # MyGlassBlog PHP ✨
 
-一个优雅的毛玻璃风格个人博客系统，PHP + MySQL 构建，支持 Docker、宝塔面板和传统服务器部署。
+一个优雅的毛玻璃风格个人博客系统，PHP + MySQL 构建，支持宝塔面板和传统服务器部署。
 
 ![PHP](https://img.shields.io/badge/PHP-7.4+-777bb4?style=flat-square&logo=php)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479a1?style=flat-square&logo=mysql)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Docker](https://img.shields.io/badge/Docker-ghcr.io-blue?style=flat-square&logo=docker)
 
 ---
 
@@ -21,81 +20,12 @@
 - **评论系统** — 支持文章评论
 - **后台管理** — 浏览器内直接管理内容
 - **宝塔友好** — 无需命令行，图形化部署
-- **Docker 支持** — 一键容器化部署，含 GitHub Actions 自动构建镜像
-
----
-
-## 🐳 Docker 镜像
-
-GitHub Actions 自动构建并推送镜像到 GitHub Container Registry：
-
-```bash
-# 拉取最新镜像
-docker pull ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
-
-# 运行（需外部 MySQL）
-docker run -d -p 3000:80 \
-  -e DB_HOST=your-db-host \
-  -e DB_NAME=your-db-name \
-  -e DB_USER=your-db-user \
-  -e DB_PASS=your-db-pass \
-  ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
-```
-
-每次推送到 `main` 或 `master` 分支，以及发布 `v*` 标签时，都会自动构建并推送镜像。
 
 ---
 
 ## 🚀 部署方式
 
-### 方式一：Docker Compose 部署（推荐，含 MySQL）
-
-一条命令启动完整的 PHP + MySQL 环境：
-
-```bash
-# 克隆仓库
-git clone https://github.com/cv1sd56f45/MyGlassBlog-PHP.git
-cd MyGlassBlog-PHP
-
-# 启动容器
-docker compose up -d
-
-# 访问
-# 前台：http://localhost:3000
-# 后台：http://localhost:3000/admin/
-# 默认账号：admin / admin123
-```
-
-Docker Compose 默认数据库配置：
-
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `DB_HOST` | db | 数据库主机（容器名） |
-| `DB_PORT` | 3306 | 数据库端口 |
-| `DB_NAME` | myglassblog | 数据库名 |
-| `DB_USER` | myglassblog | 用户名 |
-| `DB_PASS` | myglassblog123 | 密码 |
-| `DB_CHARSET` | utf8mb4 | 字符集 |
-
-### 方式二：Docker 镜像（仅 PHP）
-
-适合已有 MySQL 服务或数据库的环境：
-
-```bash
-# 拉取镜像
-docker pull ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
-
-# 运行
-docker run -d -p 3000:80 \
-  -e DB_HOST=your-mysql-host \
-  -e DB_PORT=3306 \
-  -e DB_NAME=myglassblog \
-  -e DB_USER=myglassblog \
-  -e DB_PASS=your-password \
-  ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
-```
-
-### 方式三：宝塔面板部署
+### 方式一：宝塔面板部署（推荐）
 
 已提供宝塔一键部署脚本 [`bt-deploy.sh`](bt-deploy.sh) 和详细图文指南 [`BT-DEPLOY.md`](BT-DEPLOY.md)。
 
@@ -104,13 +34,7 @@ docker run -d -p 3000:80 \
 bash /www/wwwroot/MyGlassBlog-PHP/bt-deploy.sh
 ```
 
-也支持通过 PM2 管理 Docker 启动：
-```bash
-cd /www/wwwroot/MyGlassBlog-PHP
-pm2 start ecosystem.config.js
-```
-
-### 方式四：传统安装（任意服务器）
+### 方式二：传统安装（任意服务器）
 
 #### 环境要求
 
@@ -138,8 +62,6 @@ pm2 start ecosystem.config.js
 
 ```
 MyGlassBlog-PHP/
-├── .github/workflows/       # GitHub Actions 工作流
-│   └── docker.yml            # Docker 镜像自动构建
 ├── admin/                    # 后台管理
 │   ├── login.php             # 登录页
 │   ├── index.php             # 仪表盘
@@ -150,9 +72,6 @@ MyGlassBlog-PHP/
 │   ├── timeline.php          # 时间线管理
 │   ├── comments.php          # 评论管理
 │   └── settings.php          # 站点设置
-├── docker/                   # Docker 配置
-│   ├── apache.conf           # Apache 站点配置
-│   └── entrypoint.sh         # 容器启动脚本
 ├── includes/                 # 核心类库
 │   ├── Database.php          # 数据库操作
 │   ├── Post.php              # 文章模型
@@ -167,15 +86,8 @@ MyGlassBlog-PHP/
 │   ├── header.php            # 头部
 │   └── footer.php            # 底部
 ├── uploads/                  # 上传目录
-├── .dockerignore             # Docker 忽略文件
-├── .gitattributes            # Git 行尾规范
-├── .gitignore                # Git 忽略文件
 ├── bt-deploy.sh              # 宝塔一键部署脚本
 ├── BT-DEPLOY.md              # 宝塔部署图文指南
-├── composer.json             # Composer 配置
-├── Dockerfile                # Docker 镜像构建文件
-├── docker-compose.yml        # Docker Compose 配置
-├── ecosystem.config.js       # PM2 进程管理配置
 ├── index.php                 # 首页
 ├── posts.php                 # 文章列表
 ├── post.php                  # 文章详情
@@ -185,7 +97,7 @@ MyGlassBlog-PHP/
 ├── timeline.php              # 时间线
 ├── about.php                 # 关于页
 ├── install.php               # 安装向导
-├── config.php                # 配置文件（安装/容器启动时生成）
+├── config.php                # 配置文件（安装时生成）
 ├── database.sql              # 数据库结构
 ├── .htaccess                 # Apache URL 重写
 └── README.md                 # 说明文档
@@ -222,19 +134,19 @@ MyGlassBlog-PHP/
 | MySQL 5.7+ | 数据库 |
 | Tailwind CSS | 样式框架（CDN） |
 | Vanilla JS | 原生 JavaScript |
-| Docker | 容器化部署 |
-| GitHub Actions | CI/CD 自动构建镜像 |
 
 ---
 
 ## 📝 更新日志
 
+### v1.0.1 (2026-06-21)
+- 修复 install.php 表单 action 属性缺失问题
+- 补全后台管理页面（photos/friends/timeline/comments）
+
 ### v1.0.0 (2026-06-21)
 - 首次发布
 - 完整的博客功能（文章、说说、照片墙、友链、时间线、评论）
 - 后台管理系统
-- Docker 与 Docker Compose 支持
-- GitHub Actions 自动构建 Docker 镜像
 - 宝塔面板一键部署脚本
 - 毛玻璃设计风格
 

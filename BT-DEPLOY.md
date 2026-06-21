@@ -1,112 +1,186 @@
 # 宝塔面板部署指南
 
-## 快速部署（5分钟完成）
+本文档详细介绍如何在宝塔面板部署 MyGlassBlog PHP。
 
-### 第一步：创建网站
+---
+
+## 前置条件
+
+- 已安装宝塔面板（推荐 7.x 或更高版本）
+- 已安装 PHP 7.4+（推荐 8.x）
+- 已安装 MySQL 5.7+
+- 已安装 Nginx 或 Apache
+
+---
+
+## 第一步：创建网站
 
 1. 登录宝塔面板
-2. 点击左侧「网站」→「添加站点」
-3. 填写信息：
-   - 域名：`blog.example.com`（你的域名）
-   - 根目录：`/www/wwwroot/blog.example.com`
-   - PHP版本：PHP 8.0 或以上
-   - 数据库：选择「创建数据库」，记下数据库名、用户名、密码
+2. 点击左侧菜单 **「网站」**
+3. 点击 **「添加站点」**
+4. 填写信息：
+   - **域名**：你的域名（如 `blog.example.com`）
+   - **根目录**：`/www/wwwroot/你的域名`
+   - **PHP版本**：选择 PHP 8.x
+   - **数据库**：选择「创建数据库」或稍后手动创建
+5. 点击 **「提交」**
 
-### 第二步：上传代码
+---
 
-**方法一：Git 克隆（推荐）**
+## 第二步：上传代码
 
-点击宝塔左侧「终端」，执行：
+### 方法一：下载发布版（推荐）
+
+1. 访问 [GitHub Releases](https://github.com/cv1sd56f45/MyGlassBlog-PHP/releases)
+2. 下载最新版本的 `MyGlassBlog-PHP-vX.X.X.zip`
+3. 宝塔面板 → 文件 → 进入网站根目录
+4. 上传 zip 文件并解压
+
+### 方法二：Git Clone
+
+宝塔终端执行：
 ```bash
-cd /www/wwwroot/blog.example.com
+cd /www/wwwroot/你的域名
 git clone https://github.com/cv1sd56f45/MyGlassBlog-PHP.git .
-chown -R www:www .
-chmod -R 755 .
 ```
 
-**方法二：上传文件**
+---
 
-1. 下载 ZIP 包
-2. 点击宝塔左侧「文件」
-3. 进入网站目录 `/www/wwwroot/blog.example.com`
-4. 点击「上传」，选择 ZIP 文件
-5. 右键 ZIP 文件 → 解压
+## 第三步：创建数据库
 
-### 第三步：设置权限
+1. 宝塔面板 → 数据库 → 添加数据库
+2. 填写信息：
+   - **数据库名**：`myglassblog`（或自定义）
+   - **用户名**：`myglassblog`（或自定义）
+   - **密码**：自动生成或自定义
+3. 点击 **「提交」**
+4. 记录数据库名、用户名、密码，后续安装需要
 
-在文件管理器中：
-1. 右键网站根目录
-2. 选择「权限」
-3. 设置为 `755`，勾选「应用到子目录」
-4. 所有者选择 `www`
+---
 
-### 第四步：运行安装向导
+## 第四步：导入数据库结构
 
-浏览器访问：`http://你的域名/install.php`
+1. 宝塔面板 → 数据库 → 点击数据库名后的 **「管理」**
+2. 进入 phpMyAdmin
+3. 点击 **「导入」**
+4. 选择项目根目录下的 `database.sql` 文件
+5. 点击 **「执行」**
 
-1. **环境检测** → 确认全部通过，点「下一步」
-2. **数据库配置** → 填写第一步创建的数据库信息
-3. **管理员设置** → 设置用户名和密码
-4. **完成** → 点击访问首页或进入后台
+---
+
+## 第五步：设置目录权限
+
+宝塔终端执行：
+```bash
+cd /www/wwwroot/你的域名
+chmod -R 755 .
+chmod -R 777 uploads/
+chown -R www:www .
+```
+
+或在宝塔文件管理器中：
+1. 右键 `uploads/` 目录 → 权限 → 设为 777
+2. 勾选「应用到子目录」
+
+---
+
+## 第六步：运行安装向导
+
+1. 浏览器访问 `http://你的域名/install.php`
+2. 按向导填写：
+   - **数据库主机**：`localhost`
+   - **数据库端口**：`3306`
+   - **数据库名**：刚才创建的数据库名
+   - **数据库用户**：刚才创建的用户名
+   - **数据库密码**：刚才的密码
+   - **管理员用户名**：自定义（如 `admin`）
+   - **管理员密码**：自定义
+3. 点击 **「开始安装」**
+4. 安装成功后会自动跳转到首页
+
+---
+
+## 第七步：访问后台
+
+安装完成后：
+
+- **前台首页**：`http://你的域名/`
+- **后台管理**：`http://你的域名/admin/`
+- 登录账号：安装时设置的管理员用户名和密码
 
 ---
 
 ## 常见问题
 
-### 1. 访问 install.php 显示 500 错误
+### 1. install.php 报错 "config.php 不可写"
 
-检查 PHP 版本是否 7.4+，在「软件商店」→「PHP」中切换版本。
-
-### 2. 数据库连接失败
-
-- 检查数据库用户名和密码是否正确
-- 在宝塔「数据库」中重置密码后再试
-
-### 3. 安装后访问首页空白
-
-检查 `config.php` 文件是否存在，权限是否正确。
-
-### 4. 后台登录不了
-
-默认账号：`admin` / `admin123`
-
-如果自己修改过密码忘了，在宝塔「数据库」→「管理」→ 打开 phpMyAdmin：
-
-```sql
--- 重置密码为 admin123
-UPDATE admins SET password = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' WHERE id = 1;
+手动创建配置文件：
+```bash
+touch /www/wwwroot/你的域名/includes/config.php
+chmod 777 /www/wwwroot/你的域名/includes/config.php
 ```
 
-### 5. 图片上传不了
+### 2. 页面显示空白或 500 错误
 
-检查 `uploads/` 目录是否存在，权限是否 755，所有者是否 `www`。
+检查 PHP 错误日志：
+- 宝塔面板 → 网站 → 你的站点 → 日志 → PHP 错误日志
 
-### 6. 想修改网站设置
+常见原因：
+- PHP 扩展未安装（PDO、mysqli）
+- 目录权限问题
+- 数据库连接失败
 
-登录后台 → 站点设置，在网页中修改即可。
+### 3. Apache 下伪静态不生效
+
+确保 `.htaccess` 文件存在，且 Apache 已启用 `mod_rewrite`。
+
+宝塔面板 → 网站 → 你的站点 → 设置 → 伪静态 → 选择「当前」或手动添加：
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L]
+```
+
+### 4. Nginx 下伪静态配置
+
+宝塔面板 → 网站 → 你的站点 → 设置 → 伪静态 → 添加：
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+
+location ~ \.php$ {
+    fastcgi_pass unix:/tmp/php-cgi-82.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+```
 
 ---
 
 ## 安全建议
 
-1. **删除安装文件**：安装完成后 `install.php` 会自动删除，如未删除请手动删除
-2. **修改后台密码**：使用复杂密码
-3. **开启 HTTPS**：在宝塔「网站」→「SSL」中申请免费证书
-4. **定期备份**：在宝塔「计划任务」中设置自动备份
+1. **删除安装文件**：安装完成后删除或重命名 `install.php`
+   ```bash
+   rm /www/wwwroot/你的域名/install.php
+   ```
+2. **修改后台路径**：将 `admin/` 目录重命名为不易猜到的名称
+3. **定期备份**：宝塔面板 → 计划任务 → 添加数据库和网站备份
+4. **启用 SSL**：宝塔面板 → 网站 → 你的站点 → SSL → Let's Encrypt 免费证书
 
 ---
 
-## 更新版本
+## 更新升级
 
-```bash
-cd /www/wwwroot/blog.example.com
-git pull origin main
-```
-
-如有数据库变更，执行对应的 SQL 更新脚本。
+1. 备份数据库和 `config.php` 文件
+2. 下载最新版本覆盖文件（保留 `config.php` 和 `uploads/`）
+3. 如有数据库变更，执行升级 SQL 脚本
 
 ---
 
-## 联系支持
+## 技术支持
 
-- 提 Issue：https://github.com/cv1sd56f45/MyGlassBlog-PHP/issues
+- GitHub Issues: https://github.com/cv1sd56f45/MyGlassBlog-PHP/issues
+- GitHub Releases: https://github.com/cv1sd56f45/MyGlassBlog-PHP/releases

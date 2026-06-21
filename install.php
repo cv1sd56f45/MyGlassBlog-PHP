@@ -52,7 +52,7 @@ return [
 ];
 ";
             
-            file_put_contents(__DIR__ . '/config.php', $config);
+            file_put_contents(__DIR__ . '/includes/config.php', $config);
             
             // 导入数据库
             $sql = file_get_contents(__DIR__ . '/database.sql');
@@ -166,7 +166,7 @@ return [
             
         <?php elseif ($step == 2): ?>
             <!-- 步骤2：数据库配置 -->
-            <form method="POST">
+            <form method="POST" action="?step=2">
                 <h2 class="font-bold text-lg mb-4">数据库配置</h2>
                 
                 <div class="space-y-4">
@@ -204,7 +204,7 @@ return [
             
         <?php elseif ($step == 3): ?>
             <!-- 步骤3：管理员设置 -->
-            <form method="POST">
+            <form method="POST" action="?step=3">
                 <h2 class="font-bold text-lg mb-4">设置管理员账号</h2>
                 
                 <div class="space-y-4">
