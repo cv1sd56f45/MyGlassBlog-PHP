@@ -1,0 +1,23 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force shell scripts to use LF, even on Windows
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Force config files to use LF
+docker/entrypoint.sh text eol=lf
+bt-deploy.sh text eol=lf
+
+# PHP and web files
+*.php text
+*.js text
+*.css text
+*.html text
+*.md text
+*.json text
+*.yml text
+*.yaml text
+*.sql text
+*.conf text
+*.htaccess text

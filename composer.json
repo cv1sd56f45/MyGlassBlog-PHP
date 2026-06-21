@@ -1,0 +1,21 @@
+{
+  "name": "cv1sd56f45/myglassblog-php",
+  "description": "A glassmorphism-style personal blog built with PHP + MySQL",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "cv1sd56f45",
+      "email": "admin@example.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-pdo": "*",
+    "ext-mysqli": "*",
+    "ext-gd": "*"
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}

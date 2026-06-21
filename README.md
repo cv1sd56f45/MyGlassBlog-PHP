@@ -1,10 +1,11 @@
 # MyGlassBlog PHP ✨
 
-一个优雅的毛玻璃风格个人博客系统，PHP + MySQL 构建，宝塔面板友好部署。
+一个优雅的毛玻璃风格个人博客系统，PHP + MySQL 构建，支持 Docker、宝塔面板和传统服务器部署。
 
 ![PHP](https://img.shields.io/badge/PHP-7.4+-777bb4?style=flat-square&logo=php)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479a1?style=flat-square&logo=mysql)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![Docker](https://img.shields.io/badge/Docker-ghcr.io-blue?style=flat-square&logo=docker)
 
 ---
 
@@ -20,6 +21,7 @@
 - **评论系统** — 支持文章评论
 - **后台管理** — 浏览器内直接管理内容
 - **宝塔友好** — 无需命令行，图形化部署
+- **Docker 支持** — 一键容器化部署，含 GitHub Actions 自动构建镜像
 
 ---
 
@@ -31,7 +33,7 @@ GitHub Actions 自动构建并推送镜像到 GitHub Container Registry：
 # 拉取最新镜像
 docker pull ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
 
-# 运行
+# 运行（需外部 MySQL）
 docker run -d -p 3000:80 \
   -e DB_HOST=your-db-host \
   -e DB_NAME=your-db-name \
@@ -40,22 +42,22 @@ docker run -d -p 3000:80 \
   ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
 ```
 
-每次推送到 `main` 分支或发布 `v*` 标签都会自动构建镜像。
+每次推送到 `main` 或 `master` 分支，以及发布 `v*` 标签时，都会自动构建并推送镜像。
 
 ---
 
 ## 🚀 部署方式
 
-### 方式一：Docker 部署（推荐）
+### 方式一：Docker Compose 部署（推荐，含 MySQL）
 
-支持 Linux / macOS / Windows，一条命令启动。
+一条命令启动完整的 PHP + MySQL 环境：
 
 ```bash
 # 克隆仓库
 git clone https://github.com/cv1sd56f45/MyGlassBlog-PHP.git
 cd MyGlassBlog-PHP
 
-# 启动容器（含 PHP + MySQL）
+# 启动容器
 docker compose up -d
 
 # 访问
@@ -64,74 +66,71 @@ docker compose up -d
 # 默认账号：admin / admin123
 ```
 
-Docker 环境变量：
+Docker Compose 默认数据库配置：
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `DB_HOST` | localhost | 数据库主机 |
+| `DB_HOST` | db | 数据库主机（容器名） |
 | `DB_PORT` | 3306 | 数据库端口 |
 | `DB_NAME` | myglassblog | 数据库名 |
-| `DB_USER` | root | 用户名 |
-| `DB_PASS` | 空 | 密码 |
+| `DB_USER` | myglassblog | 用户名 |
+| `DB_PASS` | myglassblog123 | 密码 |
+| `DB_CHARSET` | utf8mb4 | 字符集 |
 
-### 方式二：宝塔面板部署
+### 方式二：Docker 镜像（仅 PHP）
 
-### 环境要求
+适合已有 MySQL 服务或数据库的环境：
 
-- 宝塔面板 7.x+
+```bash
+# 拉取镜像
+docker pull ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
+
+# 运行
+docker run -d -p 3000:80 \
+  -e DB_HOST=your-mysql-host \
+  -e DB_PORT=3306 \
+  -e DB_NAME=myglassblog \
+  -e DB_USER=myglassblog \
+  -e DB_PASS=your-password \
+  ghcr.io/cv1sd56f45/MyGlassBlog-PHP:latest
+```
+
+### 方式三：宝塔面板部署
+
+已提供宝塔一键部署脚本 [`bt-deploy.sh`](bt-deploy.sh) 和详细图文指南 [`BT-DEPLOY.md`](BT-DEPLOY.md)。
+
+宝塔终端执行：
+```bash
+bash /www/wwwroot/MyGlassBlog-PHP/bt-deploy.sh
+```
+
+也支持通过 PM2 管理 Docker 启动：
+```bash
+cd /www/wwwroot/MyGlassBlog-PHP
+pm2 start ecosystem.config.js
+```
+
+### 方式四：传统安装（任意服务器）
+
+#### 环境要求
+
 - PHP 7.4+（推荐 8.x）
 - MySQL 5.7+
 - Nginx / Apache
+- 已启用 `mod_rewrite`（Apache）或配置 `try_files`（Nginx）
 
-### 部署步骤
+#### 安装步骤
 
-#### 1. 创建网站
-
-在宝塔面板 → 网站 → 添加站点：
-
-| 项目 | 值 |
-|------|-----|
-| 域名 | 你的域名（如 `blog.example.com`） |
-| 根目录 | `/www/wwwroot/blog.example.com` |
-| PHP版本 | PHP 8.x |
-| 数据库 | MySQL（选择或创建） |
-
-#### 2. 上传代码
-
-**方法一：Git 克隆（推荐）**
-
-在宝塔终端执行：
-```bash
-cd /www/wwwroot/blog.example.com
-git clone https://github.com/cv1sd56f45/MyGlassBlog-PHP.git .
-```
-
-**方法二：上传 ZIP**
-
-1. 下载 ZIP 包
-2. 在宝塔文件管理器中上传并解压
-
-#### 3. 设置目录权限
-
-在宝塔文件管理器中，右键网站根目录 → 权限 → 设置为 `755`，所有者 `www`
-
-需要可写的目录：
-- `uploads/`（自动创建）
-- `config.php`
-
-#### 4. 运行安装向导
-
-浏览器访问：`https://你的域名/install.php`
-
-按向导提示完成安装：
-1. 环境检测
-2. 填写数据库信息（在宝塔数据库管理中查看）
-3. 设置管理员账号
-
-#### 5. 完成
-
-- 前台：`https://你的域名/`
-- 后台：`https://你的域名/admin/`
+1. 上传代码到网站根目录
+2. 创建 MySQL 数据库并导入 `database.sql`
+3. 设置目录权限：
+   - `uploads/` 可写
+   - `config.php` 可写
+4. 浏览器访问 `http://你的域名/install.php`
+5. 按向导填写数据库信息并设置管理员账号
+6. 完成：
+   - 前台：`http://你的域名/`
+   - 后台：`http://你的域名/admin/`
 
 ---
 
@@ -139,42 +138,57 @@ git clone https://github.com/cv1sd56f45/MyGlassBlog-PHP.git .
 
 ```
 MyGlassBlog-PHP/
-├── admin/                  # 后台管理
-│   ├── login.php           # 登录页
-│   ├── index.php           # 仪表盘
-│   ├── posts.php           # 文章管理
-│   ├── chatters.php        # 说说管理
-│   ├── photos.php          # 照片管理
-│   ├── friends.php         # 友链管理
-│   ├── timeline.php        # 时间线管理
-│   ├── comments.php        # 评论管理
-│   └── settings.php        # 站点设置
-├── includes/               # 核心类库
-│   ├── Database.php        # 数据库操作
-│   ├── Post.php            # 文章模型
-│   ├── Chatter.php         # 说说模型
-│   ├── Photo.php           # 照片模型
-│   ├── Friend.php          # 友链模型
-│   ├── Timeline.php        # 时间线模型
-│   ├── Comment.php         # 评论模型
-│   ├── Settings.php        # 配置管理
-│   └── functions.php       # 工具函数
-├── templates/              # 模板文件
-│   ├── header.php          # 头部
-│   └── footer.php          # 底部
-├── uploads/                # 上传目录
-├── index.php               # 首页
-├── posts.php               # 文章列表
-├── post.php                # 文章详情
-├── chatter.php             # 说说页
-├── photowall.php           # 照片墙
-├── friends.php             # 友链页
-├── timeline.php            # 时间线
-├── about.php               # 关于页
-├── install.php             # 安装向导
-├── config.php              # 配置文件（安装时生成）
-├── database.sql            # 数据库结构
-└── README.md               # 说明文档
+├── .github/workflows/       # GitHub Actions 工作流
+│   └── docker.yml            # Docker 镜像自动构建
+├── admin/                    # 后台管理
+│   ├── login.php             # 登录页
+│   ├── index.php             # 仪表盘
+│   ├── posts.php             # 文章管理
+│   ├── chatters.php          # 说说管理
+│   ├── photos.php            # 照片管理
+│   ├── friends.php           # 友链管理
+│   ├── timeline.php          # 时间线管理
+│   ├── comments.php          # 评论管理
+│   └── settings.php          # 站点设置
+├── docker/                   # Docker 配置
+│   ├── apache.conf           # Apache 站点配置
+│   └── entrypoint.sh         # 容器启动脚本
+├── includes/                 # 核心类库
+│   ├── Database.php          # 数据库操作
+│   ├── Post.php              # 文章模型
+│   ├── Chatter.php           # 说说模型
+│   ├── Photo.php             # 照片模型
+│   ├── Friend.php            # 友链模型
+│   ├── Timeline.php          # 时间线模型
+│   ├── Comment.php           # 评论模型
+│   ├── Settings.php          # 配置管理
+│   └── functions.php         # 工具函数
+├── templates/                # 模板文件
+│   ├── header.php            # 头部
+│   └── footer.php            # 底部
+├── uploads/                  # 上传目录
+├── .dockerignore             # Docker 忽略文件
+├── .gitattributes            # Git 行尾规范
+├── .gitignore                # Git 忽略文件
+├── bt-deploy.sh              # 宝塔一键部署脚本
+├── BT-DEPLOY.md              # 宝塔部署图文指南
+├── composer.json             # Composer 配置
+├── Dockerfile                # Docker 镜像构建文件
+├── docker-compose.yml        # Docker Compose 配置
+├── ecosystem.config.js       # PM2 进程管理配置
+├── index.php                 # 首页
+├── posts.php                 # 文章列表
+├── post.php                  # 文章详情
+├── chatter.php               # 说说页
+├── photowall.php             # 照片墙
+├── friends.php               # 友链页
+├── timeline.php              # 时间线
+├── about.php                 # 关于页
+├── install.php               # 安装向导
+├── config.php                # 配置文件（安装/容器启动时生成）
+├── database.sql              # 数据库结构
+├── .htaccess                 # Apache URL 重写
+└── README.md                 # 说明文档
 ```
 
 ---
@@ -186,7 +200,7 @@ MyGlassBlog-PHP/
 登录后台 → 站点设置，可修改：
 - 网站标题、作者名、个人简介
 - 头像、社交链接
-- 主题颜色（建议2-4个颜色）
+- 主题颜色（建议 2-4 个颜色）
 - 分页数量
 
 ### 主题颜色示例
@@ -208,6 +222,8 @@ MyGlassBlog-PHP/
 | MySQL 5.7+ | 数据库 |
 | Tailwind CSS | 样式框架（CDN） |
 | Vanilla JS | 原生 JavaScript |
+| Docker | 容器化部署 |
+| GitHub Actions | CI/CD 自动构建镜像 |
 
 ---
 
@@ -215,8 +231,11 @@ MyGlassBlog-PHP/
 
 ### v1.0.0 (2026-06-21)
 - 首次发布
-- 完整的博客功能
-- 宝塔面板友好部署
+- 完整的博客功能（文章、说说、照片墙、友链、时间线、评论）
+- 后台管理系统
+- Docker 与 Docker Compose 支持
+- GitHub Actions 自动构建 Docker 镜像
+- 宝塔面板一键部署脚本
 - 毛玻璃设计风格
 
 ---
