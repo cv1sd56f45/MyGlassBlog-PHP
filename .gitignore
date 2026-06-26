@@ -19,6 +19,14 @@ logs/
 # 安装锁（不应提交，每次安装单独生成）
 config.lock
 
+# 安装配置文件（含数据库密码）
+includes/config.php
+
+# 打包脚本
+pack_*.py
+recreate_release.py
+reupload.py
+
 # 上传文件（用户数据）
 uploads/*
 !uploads/.gitkeep

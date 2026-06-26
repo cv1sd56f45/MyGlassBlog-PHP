@@ -11,6 +11,7 @@ require_once __DIR__ . '/Photo.php';
 require_once __DIR__ . '/Friend.php';
 require_once __DIR__ . '/Timeline.php';
 require_once __DIR__ . '/Comment.php';
+require_once __DIR__ . '/Donate.php';
 
 /**
  * 自动加载类

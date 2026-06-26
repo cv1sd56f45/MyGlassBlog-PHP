@@ -77,6 +77,9 @@ function admin_header($title = '管理后台') {
                 <a href="<?= site_url('admin/comments.php') ?>" class="menu-item block px-4 py-3 rounded-lg mb-1 <?= basename($_SERVER['PHP_SELF']) == 'comments.php' ? 'active' : '' ?>">
                     <i class="fas fa-comments w-6"></i> 评论管理
                 </a>
+                <a href="<?= site_url('admin/donate.php') ?>" class="menu-item block px-4 py-3 rounded-lg mb-1 <?= basename($_SERVER['PHP_SELF']) == 'donate.php' ? 'active' : '' ?>">
+                    <i class="fas fa-heart w-6"></i> 捐款管理
+                </a>
                 <a href="<?= site_url('admin/settings.php') ?>" class="menu-item block px-4 py-3 rounded-lg mb-1 <?= basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : '' ?>">
                     <i class="fas fa-cog w-6"></i> 站点设置
                 </a>

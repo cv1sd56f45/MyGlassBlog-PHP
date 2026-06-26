@@ -84,4 +84,16 @@ class Photo {
     public function getLatest($limit = 6) {
         return $this->db->query("SELECT * FROM photos WHERE status = 1 ORDER BY sort_order DESC, id DESC LIMIT ?", [$limit]);
     }
+    
+    /**
+     * 获取照片总数
+     */
+    public function getCount($status = null) {
+        if ($status !== null) {
+            $result = $this->db->queryOne("SELECT COUNT(*) as cnt FROM photos WHERE status = ?", [$status]);
+        } else {
+            $result = $this->db->queryOne("SELECT COUNT(*) as cnt FROM photos");
+        }
+        return $result ? $result['cnt'] : 0;
+    }
 }

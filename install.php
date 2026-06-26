@@ -138,7 +138,7 @@ return [
                         'PHP >= 7.4' => version_compare(PHP_VERSION, '7.4.0', '>='),
                         'PDO 扩展' => extension_loaded('pdo_mysql'),
                         'JSON 扩展' => function_exists('json_encode'),
-                        'config.php 可写' => is_writable(__DIR__),
+                        'config.php 可写' => (file_exists(__DIR__.'/includes/config.php') ? is_writable(__DIR__.'/includes/config.php') : is_writable(__DIR__.'/includes')),
                     ];
                     $allPass = true;
                     ?>

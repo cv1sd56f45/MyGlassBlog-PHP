@@ -197,4 +197,22 @@ CREATE TABLE `visits` (
   KEY `idx_created` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='访问日志表';
 
+-- ----------------------------
+-- 10. 捐款/赞赏表
+-- ----------------------------
+DROP TABLE IF EXISTS `donations`;
+CREATE TABLE `donations` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `platform` varchar(50) NOT NULL DEFAULT '' COMMENT '平台名称（如：微信支付、支付宝）',
+  `qrcode` varchar(500) NOT NULL DEFAULT '' COMMENT '收款码图片URL',
+  `account_name` varchar(100) NOT NULL DEFAULT '' COMMENT '账户名称/昵称',
+  `description` varchar(500) NOT NULL DEFAULT '' COMMENT '描述文字',
+  `is_enabled` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用：0停用 1启用',
+  `sort_order` int(11) NOT NULL DEFAULT 0 COMMENT '排序（越小越靠前）',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_sort` (`sort_order`),
+  KEY `idx_enabled` (`is_enabled`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='捐款/赞赏表';
+
 SET FOREIGN_KEY_CHECKS = 1;
