@@ -24,11 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             'title' => trim($_POST['title']),
             'content' => trim($_POST['content']),
-            'date' => trim($_POST['date']),
-            'icon' => trim($_POST['icon']),
-            'type' => trim($_POST['type']),
+            'event_date' => trim($_POST['date'] ?? date('Y-m-d')),
+            'icon' => trim($_POST['icon'] ?? 'fas fa-star'),
+            'type' => trim($_POST['type'] ?? 'event'),
             'sort_order' => intval($_POST['sort_order'] ?? 0),
         ];
+        
+        // 确保 event_date 不为空
+        if (empty($data['event_date'])) {
+            $data['event_date'] = date('Y-m-d');
+        }
         
         if (empty($data['title']) || empty($data['content'])) {
             $error = '标题和内容不能为空';
@@ -104,7 +109,7 @@ if ($action === 'edit' && isset($_GET['id'])) {
                 
                 <div>
                     <label class="block text-gray-700 font-medium mb-2">类型</label>
-                    <select name="icon" name="type"
+                    <select name="type"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="event" <?= ($editItem['type'] ?? '') == 'event' ? 'selected' : '' ?>>事件 📌</option>
                         <option value="milestone" <?= ($editItem['type'] ?? '') == 'milestone' ? 'selected' : '' ?>>里程碑 🏆</option>
