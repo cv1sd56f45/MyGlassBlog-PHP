@@ -39,11 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $filepath = $uploadDir . $filename;
                 
                 if (move_uploaded_file($_FILES['photo']['tmp_name'], $filepath)) {
+                    $photoUrl = 'uploads/photos/' . $filename;
                     $data = [
                         'title' => trim($_POST['title'] ?? ''),
                         'description' => trim($_POST['description'] ?? ''),
-                        'path' => 'uploads/photos/' . $filename,
-                        'cover' => 'uploads/photos/' . $filename,
+                        'url' => $photoUrl,
+                        'thumb' => $photoUrl,
                     ];
                     $photoModel->create($data);
                     $message = '照片已上传';
@@ -124,7 +125,7 @@ $total = $photoModel->getCount();
             <?php foreach ($photos as $photo): ?>
                 <div class="group relative bg-gray-50 rounded-lg overflow-hidden border hover:shadow-md transition-shadow">
                     <?php
-                    $imgPath = site_url($photo['cover'] ?? $photo['path'] ?? '');
+                    $imgPath = site_url($photo['thumb'] ?? $photo['url'] ?? '');
                     ?>
                     <a href="<?= e($imgPath) ?>" target="_blank">
                         <img src="<?= e($imgPath) ?>" alt="<?= e($photo['title']) ?>"
