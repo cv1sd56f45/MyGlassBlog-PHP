@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'site_title', 'site_author', 'site_bio', 'site_avatar',
         'nav_title', 'theme_colors', 'default_cover',
         'social_github', 'social_twitter', 'social_email', 'social_wechat',
-        'footer_text', 'posts_per_page', 'chatters_per_page'
+        'footer_text', 'posts_per_page', 'chatters_per_page', 'icp_number'
     ];
     
     $success = true;
@@ -156,6 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="block text-gray-700 font-medium mb-2">每页说说数</label>
                         <input type="number" name="chatters_per_page" value="<?= e($settings->get('chatters_per_page', 20)) ?>"
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">ICP备案号</label>
+                        <input type="text" name="icp_number" value="<?= e($settings->get('icp_number')) ?>"
+                               placeholder="如：京ICP备xxxxxxxx号"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <p class="text-sm text-gray-500 mt-1">将显示在页面底部</p>
                     </div>
                 </div>
             </div>

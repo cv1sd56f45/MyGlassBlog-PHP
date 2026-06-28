@@ -23,6 +23,14 @@ class Donate {
     }
     
     /**
+     * 根据支付类型获取列表
+     */
+    public function getByPayType($payType) {
+        $sql = "SELECT * FROM donations WHERE is_enabled = 1 AND pay_type = ? ORDER BY sort_order ASC, id ASC";
+        return $this->db->query($sql, [$payType]);
+    }
+    
+    /**
      * 根据ID获取
      */
     public function getById($id) {
@@ -33,11 +41,13 @@ class Donate {
      * 创建
      */
     public function create($data) {
-        $sql = "INSERT INTO donations (platform, qrcode, account_name, description, is_enabled, sort_order) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO donations (platform, pay_type, qrcode, link, account_name, description, is_enabled, sort_order) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $this->db->execute($sql, [
             $data['platform'],
+            $data['pay_type'] ?? 'qrcode',
             $data['qrcode'] ?? '',
+            $data['link'] ?? '',
             $data['account_name'] ?? '',
             $data['description'] ?? '',
             $data['is_enabled'] ?? 1,
@@ -53,7 +63,7 @@ class Donate {
         $fields = [];
         $params = [];
         
-        foreach (['platform', 'qrcode', 'account_name', 'description', 'is_enabled', 'sort_order'] as $field) {
+        foreach (['platform', 'pay_type', 'qrcode', 'link', 'account_name', 'description', 'is_enabled', 'sort_order'] as $field) {
             if (isset($data[$field])) {
                 $fields[] = "$field = ?";
                 $params[] = $data[$field];
@@ -71,7 +81,6 @@ class Donate {
      * 删除
      */
     public function delete($id) {
-        // 删除时一并获取二维码路径以便清理文件
         $item = $this->getById($id);
         if ($item) {
             $this->db->execute("DELETE FROM donations WHERE id = ?", [$id]);
@@ -86,5 +95,18 @@ class Donate {
     public function getCount() {
         $result = $this->db->queryOne("SELECT COUNT(*) as cnt FROM donations");
         return $result ? $result['cnt'] : 0;
+    }
+    
+    /**
+     * 获取支付类型显示名称
+     */
+    public static function getPayTypeName($type) {
+        $names = [
+            'qrcode' => '收款二维码',
+            'yipay' => '易支付',
+            'mapay' => '码支付',
+            'link' => '自定义链接'
+        ];
+        return $names[$type] ?? $type;
     }
 }

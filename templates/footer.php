@@ -8,6 +8,16 @@
         <p class="mt-2 opacity-50 text-sm">
             © <?= date('Y') ?> <?= e($settings->get('site_author')) ?>
         </p>
+        <?php 
+        $icpNumber = $settings->get('icp_number', '');
+        if (!empty($icpNumber)): 
+        ?>
+            <p class="mt-2 opacity-40 text-xs">
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" class="hover:opacity-70 transition-opacity">
+                    <?= e($icpNumber) ?>
+                </a>
+            </p>
+        <?php endif; ?>
     </footer>
     
     <!-- 暗色模式脚本 -->
