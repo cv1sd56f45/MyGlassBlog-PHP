@@ -18,6 +18,18 @@ require_once __DIR__ . '/templates/header.php';
     <p class="text-sm opacity-70">你的支持是我持续创作的动力！</p>
 </div>
 
+<!-- 在线支付按钮 -->
+<?php 
+$paymentGatewayModel = new PaymentGateway();
+$enabledGateways = $paymentGatewayModel->getEnabled();
+?>
+<?php if (!empty($enabledGateways)): ?>
+    <div class="text-center mb-8">
+        <a href="<?= site_url('payment.php') ?>" class="btn btn-primary btn-lg">💳 在线赞助</a>
+        <p class="text-sm opacity-60 mt-2">支持支付宝、微信支付等多种方式</p>
+    </div>
+<?php endif; ?>
+
 <?php if (empty($donations)): ?>
     <div class="glass rounded-xl p-12 text-center opacity-70 max-w-md mx-auto">
         <p class="text-2xl mb-2">🙏</p>
