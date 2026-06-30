@@ -1,5 +1,6 @@
 -- ============================================
--- MyGlassBlog PHP 版本数据库结构
+-- MyGlassBlog PHP v1.5.0 完整数据库结构
+-- 一键安装版 - 包含所有 12 张表
 -- 适用于宝塔面板 + MySQL 5.7+
 -- ============================================
 
@@ -49,8 +50,8 @@ CREATE TABLE `posts` (
 
 -- 示例文章
 INSERT INTO `posts` (`title`, `slug`, `content`, `category`, `description`, `cover`, `status`) VALUES
-('你好，世界', 'hello-world', '# 你好，世界！\n\n这是我的第一篇博客文章。\n\n## 欢迎来到我的博客\n\n这个博客使用 **PHP + MySQL** 构建，采用毛玻璃设计风格。\n\n```php\necho \"Hello, World!\";\n```\n\n感谢你的访问！', '随笔', '这是我的第一篇博客文章，欢迎访问！', '', 1),
-('博客搭建记录', 'dfew', '# 博客搭建记录\n\n今天把博客从 Next.js 迁移到了 PHP，宝塔部署更方便了。\n\n## 为什么迁移\n\n- 宝塔面板原生支持 PHP\n- 不需要 Node.js 运行时\n- 数据库管理更直观\n- 后台功能更好维护', '技术', '博客从 Next.js 迁移到 PHP 的记录', '', 1);
+('你好，世界', 'hello-world', '# 你好，世界！\n\n这是我的第一篇博客文章。\n\n## 欢迎来到我的博客\n\n这个博客使用 **PHP + MySQL** 构建，采用毛玻璃设计风格。\n\n```php\necho "Hello, World!";\n```\n\n感谢你的访问！', '随笔', '这是我的第一篇博客文章，欢迎访问！', '', 1),
+('博客搭建记录', 'blog-setup-notes', '# 博客搭建记录\n\n今天把博客搭建完成了，部署到宝塔面板。\n\n## 技术栈\n\n- **后端**：PHP 8.0 + MySQL 5.7\n- **前端**：Tailwind CSS + Vanilla JS\n- **部署**：宝塔面板 + Nginx\n- **设计**：Glassmorphism 毛玻璃风格\n\n## 功能特性\n\n- 📝 文章管理（支持 Markdown）\n- 💬 说说/朋友圈\n- 📷 照片墙\n- 🔗 友链管理\n- 📅 时间线\n- 💰 捐款/赞赏（含在线支付）\n- 🎮 MC 服务器状态查询\n\n## 安装\n\n下载 release zip，解压到网站根目录，访问 `install.php` 即可。', '技术', '博客从零搭建的完整记录', '', 1);
 
 -- ----------------------------
 -- 3. 说说表
@@ -68,7 +69,8 @@ CREATE TABLE `chatters` (
 -- 示例说说
 INSERT INTO `chatters` (`content`) VALUES
 ('今天天气真好，适合写代码 🚀'),
-('博客终于上线了，开心！');
+('博客终于上线了，开心！'),
+('MyGlassBlog v1.5.0 发布，一键安装体验 🎉');
 
 -- ----------------------------
 -- 4. 照片墙表
@@ -108,7 +110,8 @@ CREATE TABLE `friends` (
 
 -- 示例友链
 INSERT INTO `friends` (`name`, `url`, `avatar`, `description`, `sort_order`) VALUES
-('QClaw', 'https://github.com/openclaw/openclaw', '', '本地 AI 助手', 1);
+('MyGlassBlog', 'https://github.com/cv1sd56f45/MyGlassBlog-PHP', '', '本项目 GitHub 仓库', 1),
+('PHP 官网', 'https://www.php.net', '', 'PHP 官方站点', 2);
 
 -- ----------------------------
 -- 6. 时间线表
@@ -127,6 +130,11 @@ CREATE TABLE `timeline` (
   KEY `idx_date` (`event_date`),
   KEY `idx_sort` (`sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='时间线表';
+
+-- 示例时间线
+INSERT INTO `timeline` (`title`, `content`, `event_date`, `icon`, `sort_order`) VALUES
+('MyGlassBlog v1.0.0 发布', 'PHP+MySQL 博客系统首个正式版本发布', '2026-06-21', '🚀', 1),
+('MyGlassBlog v1.5.0 发布', '一键安装版，集成支付/捐款/MC状态查询', CURDATE(), '🎉', 2);
 
 -- ----------------------------
 -- 7. 评论表
@@ -179,10 +187,12 @@ INSERT INTO `settings` (`site_key`, `site_value`, `description`) VALUES
 ('social_wechat', '', '微信二维码'),
 ('footer_text', 'Powered by MyGlassBlog PHP', '页脚文字'),
 ('posts_per_page', '10', '每页文章数'),
-('chatters_per_page', '20', '每页说说数');
+('chatters_per_page', '20', '每页说说数'),
+('icp_number', '', 'ICP备案号'),
+('donation_type', 'qrcode', '默认捐赠类型：qrcode/yipay/mapay/link/all');
 
 -- ----------------------------
--- 9. 访问日志表（可选）
+-- 9. 访问日志表
 -- ----------------------------
 DROP TABLE IF EXISTS `visits`;
 CREATE TABLE `visits` (
@@ -198,21 +208,74 @@ CREATE TABLE `visits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='访问日志表';
 
 -- ----------------------------
--- 10. 捐款/赞赏表
+-- 10. 捐款/赞赏表（含支付类型）
 -- ----------------------------
 DROP TABLE IF EXISTS `donations`;
 CREATE TABLE `donations` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `platform` varchar(50) NOT NULL DEFAULT '' COMMENT '平台名称（如：微信支付、支付宝）',
-  `qrcode` varchar(500) NOT NULL DEFAULT '' COMMENT '收款码图片URL',
+  `pay_type` varchar(20) NOT NULL DEFAULT 'qrcode' COMMENT '支付类型：qrcode=二维码 yipay=易支付 mapay=码支付 link=自定义链接',
+  `qrcode` varchar(500) NOT NULL DEFAULT '' COMMENT '收款码图片URL（pay_type=qrcode时使用）',
+  `link` varchar(500) NOT NULL DEFAULT '' COMMENT '自定义链接（pay_type=link时使用）',
   `account_name` varchar(100) NOT NULL DEFAULT '' COMMENT '账户名称/昵称',
   `description` varchar(500) NOT NULL DEFAULT '' COMMENT '描述文字',
   `is_enabled` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用：0停用 1启用',
   `sort_order` int(11) NOT NULL DEFAULT 0 COMMENT '排序（越小越靠前）',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  KEY `idx_pay_type` (`pay_type`),
   KEY `idx_sort` (`sort_order`),
   KEY `idx_enabled` (`is_enabled`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='捐款/赞赏表';
 
+-- ----------------------------
+-- 11. 支付网关配置表
+-- ----------------------------
+DROP TABLE IF EXISTS `payment_gateways`;
+CREATE TABLE `payment_gateways` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `gateway_type` varchar(20) NOT NULL DEFAULT '' COMMENT '网关类型：yipay=易支付 mapay=码支付',
+  `gateway_name` varchar(50) NOT NULL DEFAULT '' COMMENT '网关名称（如：易支付-支付宝）',
+  `pid` varchar(100) NOT NULL DEFAULT '' COMMENT '商户PID',
+  `key` varchar(255) NOT NULL DEFAULT '' COMMENT '商户密钥',
+  `api_url` varchar(500) NOT NULL DEFAULT '' COMMENT 'API地址',
+  `notify_url` varchar(500) NOT NULL DEFAULT '' COMMENT '异步回调地址',
+  `return_url` varchar(500) NOT NULL DEFAULT '' COMMENT '同步跳转地址',
+  `is_enabled` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否启用：0停用 1启用',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_type` (`gateway_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付网关配置表';
+
+-- ----------------------------
+-- 12. 支付订单表
+-- ----------------------------
+DROP TABLE IF EXISTS `payment_orders`;
+CREATE TABLE `payment_orders` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_no` varchar(50) NOT NULL DEFAULT '' COMMENT '订单号',
+  `gateway_type` varchar(20) NOT NULL DEFAULT '' COMMENT '网关类型',
+  `pay_type` varchar(20) NOT NULL DEFAULT '' COMMENT '支付类型：alipay=支付宝 wxpay=微信支付 qqpay=QQ钱包',
+  `amount` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT '支付金额',
+  `actual_amount` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT '实际支付金额',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态：0待支付 1已支付 2已取消 3支付失败',
+  `payer_name` varchar(50) NOT NULL DEFAULT '' COMMENT '付款人名称',
+  `payer_contact` varchar(100) NOT NULL DEFAULT '' COMMENT '付款人联系方式',
+  `message` varchar(500) NOT NULL DEFAULT '' COMMENT '留言',
+  `trade_no` varchar(100) NOT NULL DEFAULT '' COMMENT '第三方交易号',
+  `pay_time` timestamp NULL DEFAULT NULL COMMENT '支付时间',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_order_no` (`order_no`),
+  KEY `idx_status` (`status`),
+  KEY `idx_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付订单表';
+
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- ============================================
+-- 安装完成！共 12 张表
+-- 默认管理员：admin / admin123（请登录后立即修改）
+-- ============================================
