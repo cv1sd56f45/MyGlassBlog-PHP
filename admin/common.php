@@ -83,6 +83,9 @@ function admin_header($title = '管理后台') {
                 <a href="<?= site_url('admin/payment.php') ?>" class="menu-item block px-4 py-3 rounded-lg mb-1 <?= basename($_SERVER['PHP_SELF']) == 'payment.php' ? 'active' : '' ?>">
                     <i class="fas fa-credit-card w-6"></i> 支付配置
                 </a>
+                <a href="<?= site_url('admin/mcs.php') ?>" class="menu-item block px-4 py-3 rounded-lg mb-1 <?= basename(\$_SERVER['PHP_SELF']) == 'mcs.php' ? 'active' : '' ?>">
+                    <i class="fas fa-gamepad w-6"></i> MC服务器
+                </a>
                 <a href="<?= site_url('admin/settings.php') ?>" class="menu-item block px-4 py-3 rounded-lg mb-1 <?= basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : '' ?>">
                     <i class="fas fa-cog w-6"></i> 站点设置
                 </a>

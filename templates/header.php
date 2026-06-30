@@ -154,6 +154,7 @@ $themeColors = $settings->getThemeColors();
                 <a href="<?= site_url('friends.php') ?>" class="hover:opacity-80 transition-opacity">友链</a>
                 <a href="<?= site_url('timeline.php') ?>" class="hover:opacity-80 transition-opacity">时间线</a>
                 <a href="<?= site_url('donate.php') ?>" class="hover:opacity-80 transition-opacity">赞赏</a>
+                <a href="<?= site_url('mcs.php') ?>" class="hover:opacity-80 transition-opacity">🎮 MC服务器</a>
                 <a href="<?= site_url('about.php') ?>" class="hover:opacity-80 transition-opacity">关于</a>
                 
                 <button onclick="toggleDarkMode()" class="dark-toggle p-2 rounded-lg glass hover:bg-white/20 transition-colors" title="切换主题">
