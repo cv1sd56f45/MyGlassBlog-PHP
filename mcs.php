@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || isset($_GET['ip'])) {
 $exampleServers = [
     ['ip' => 'mc.hypixel.net', 'name' => 'Hypixel'],
     ['ip' => 'play.2b2t.org', 'name' => '2b2t'],
-    ['ip' => 'mc.weimc.bond', 'name' => ?&gt;<?= e($settings->get('site_title', 'My GlassBlog')) ?> 服务器'],
+    ['ip' => 'mc.weimc.bond', 'name' => e($settings->get('site_title', 'My GlassBlog')) . ' 服务器'],
 ];
 
 require_once __DIR__ . '/templates/header.php';

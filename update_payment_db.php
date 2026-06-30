@@ -12,7 +12,7 @@ if (!isset($_SESSION['admin_id'])) {
     die('请先<a href="admin/login.php">登录后台</a>');
 }
 
-$db = Database::getInstance()->getConnection();
+$db = Database::getInstance()->getPdo();
 $success = [];
 $errors = [];
 
